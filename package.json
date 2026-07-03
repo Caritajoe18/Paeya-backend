@@ -1,0 +1,36 @@
+{
+  "name": "payer-backend",
+  "version": "1.0.0",
+  "description": "Unified SME financial platform powered by Nomba API",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "migrate": "sequelize-cli db:migrate",
+    "migrate:undo": "sequelize-cli db:migrate:undo",
+    "migrate:reset": "sequelize-cli db:migrate:undo:all && sequelize-cli db:migrate",
+    "seed": "sequelize-cli db:seed:all",
+    "lint": "eslint src/",
+    "typecheck": "echo 'No typecheck configured'"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "axios": "^1.7.0",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.5",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0",
+    "express-rate-limit": "^7.4.0",
+    "uuid": "^10.0.0",
+    "pg": "^8.13.0",
+    "sequelize": "^6.37.0",
+    "crypto": "^1.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0",
+    "sequelize-cli": "^6.6.2"
+  }
+}
