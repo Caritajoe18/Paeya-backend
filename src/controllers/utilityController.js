@@ -57,7 +57,11 @@ export async function purchaseAirtime(req, res, next) {
 export async function fetchDataPlans(req, res, next) {
   try {
     const result = await NombaUtilityService.fetchDataPlans(req.params.telco);
-    res.json({ success: true, data: result.data || result });
+    const raw = result.data || result;
+    const plans = Object.entries(raw)
+      .filter(([k]) => /^\d+$/.test(k))
+      .map(([, v]) => v);
+    res.json({ success: true, data: plans });
   } catch (err) {
     next(err);
   }
