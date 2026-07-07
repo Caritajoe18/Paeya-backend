@@ -7,7 +7,7 @@ const config = {
   nodeEnv: process.env.NODE_ENV || 'development',
   isDev: (process.env.NODE_ENV || 'development') === 'development',
 
-  // ── Nomba API ───────────────────────────────────────
+  // ── Nomba API  live https://api.nomba.com/v1───────────────────────────────────────
   nomba: {
     apiKey: process.env.NOMBA_API_KEY || '',
     apiSecret: process.env.NOMBA_API_SECRETE_KEY || '',
@@ -15,8 +15,8 @@ const config = {
     sandboxMode: process.env.NOMBA_SANDBOX_MODE !== 'false',
     baseUrl:
       process.env.NOMBA_ENVIRONMENT === 'production'
-        ? 'https://api.nomba.com/v1'
-        : 'https://api.sandbox.nomba.com/v1',
+        ? 'https://sandbox.nomba.com/v1'
+        : 'https://sandbox.nomba.com/v1',
     sandboxDefaults: {
       checkoutSessionId: 'cs_sandbox_' + Date.now(),
       transferReference: 'trf_sandbox_' + Date.now(),

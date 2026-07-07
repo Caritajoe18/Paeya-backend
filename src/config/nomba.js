@@ -1,15 +1,17 @@
 import axios from 'axios';
 import config from './index.js';
 
+const isProduction = config.nomba.environment === 'production';
+
 const nombaClient = axios.create({
   baseURL: config.nomba.baseUrl,
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
-    ...(config.nomba.sandboxMode
-      ? {}
-      : { Authorization: `Bearer ${config.nomba.apiKey}` }),
+    ...(isProduction
+      ? { Authorization: `Bearer ${config.nomba.apiKey}` }
+      : {}),
   },
 });
 

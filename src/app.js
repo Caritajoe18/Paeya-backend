@@ -11,7 +11,7 @@ const app = express();
 
 // ── Security ──────────────────────────────────────────
 app.use(helmet());
-app.use(cors({ origin: config.isDev ? '*' : process.env.CORS_ORIGIN }));
+app.use(cors({ origin: '*' }));
 
 // ── Rate limiting ─────────────────────────────────────
 app.use(globalLimiter);
