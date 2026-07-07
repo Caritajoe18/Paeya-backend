@@ -1,23 +1,62 @@
 import axios from 'axios';
 import config from './index.js';
 
+const BASE_URL = config.nomba.baseUrl;
+
+let cachedToken = null;
+let tokenExpiry = 0;
+
+function isSandboxNoAuth() {
+  return config.nomba.sandboxMode && !config.nomba.clientId;
+}
+
+async function getAccessToken() {
+  if (cachedToken && Date.now() < tokenExpiry) return cachedToken;
+
+  if (!config.nomba.clientId || !config.nomba.clientSecret) {
+    throw new Error('NOMBA_CLIENT_ID and NOMBA_CLIENT_SECRET are required for authentication');
+  }
+
+  const res = await axios.post(`${BASE_URL}/auth/token/issue`, {
+    grant_type: 'client_credentials',
+    client_id: config.nomba.clientId,
+    client_secret: config.nomba.clientSecret,
+  }, {
+    headers: {
+      'Content-Type': 'application/json',
+      ...(config.nomba.accountId ? { accountId: config.nomba.accountId } : {}),
+    },
+  });
+
+  const token = res.data?.data?.access_token;
+  if (!token) throw new Error('Failed to obtain Nomba access token');
+
+  cachedToken = token;
+  tokenExpiry = Date.now() + 55 * 60 * 1000;
+
+  return token;
+}
+
 const nombaClient = axios.create({
-  baseURL: config.nomba.baseUrl,
+  baseURL: BASE_URL,
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
-    ...(config.nomba.apiKey ? { Authorization: `Bearer ${config.nomba.apiKey}` } : {}),
   },
 });
 
-nombaClient.interceptors.request.use(
-  (req) => {
-    console.log(`[Nomba] ${req.method?.toUpperCase()} ${req.baseURL}${req.url}`);
-    return req;
-  },
-  (err) => Promise.reject(err),
-);
+nombaClient.interceptors.request.use(async (req) => {
+  if (!isSandboxNoAuth()) {
+    const token = await getAccessToken();
+    req.headers.Authorization = `Bearer ${token}`;
+    if (config.nomba.accountId) {
+      req.headers.accountId = config.nomba.accountId;
+    }
+  }
+  console.log(`[Nomba] ${req.method?.toUpperCase()} ${req.baseURL}${req.url}`);
+  return req;
+}, (err) => Promise.reject(err));
 
 nombaClient.interceptors.response.use(
   (res) => res,

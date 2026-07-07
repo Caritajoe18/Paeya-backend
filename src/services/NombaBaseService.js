@@ -4,12 +4,12 @@ import { v4 as uuidv4 } from 'uuid';
 
 class NombaBaseService {
   constructor() {
-    this.isSandbox = config.nomba.sandboxMode;
+    this.useMock = config.nomba.sandboxMode && !config.nomba.clientId;
     this.client = nombaClient;
   }
 
   async _request(method, path, data = null, options = {}) {
-    if (this.isSandbox) {
+    if (this.useMock) {
       return this._mockResponse(method, path, data);
     }
     const headers = {};

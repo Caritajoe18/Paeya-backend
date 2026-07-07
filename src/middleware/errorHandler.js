@@ -35,7 +35,8 @@ export function errorHandler(err, _req, res, _next) {
     success: false,
     error: {
       code: err.code || 'INTERNAL_ERROR',
-      message: config.isDev ? err.message : 'An unexpected error occurred',
+      message: err.message || 'An unexpected error occurred',
+      ...(err.nombaData ? { details: err.nombaData } : {}),
     },
   });
 }

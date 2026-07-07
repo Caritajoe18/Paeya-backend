@@ -11,11 +11,14 @@ const config = {
   nomba: {
     apiKey: process.env.NOMBA_API_KEY || '',
     apiSecret: process.env.NOMBA_API_SECRETE_KEY || '',
+    clientId: process.env.NOMBA_CLIENT_ID || '',
+    clientSecret: process.env.NOMBA_CLIENT_SECRET || '',
+    accountId: process.env.NOMBA_ACCOUNT_ID || '',
     environment: process.env.NOMBA_ENVIRONMENT || 'sandbox',
     sandboxMode: process.env.NOMBA_SANDBOX_MODE !== 'false',
     baseUrl:
       process.env.NOMBA_ENVIRONMENT === 'production'
-        ? 'https://sandbox.nomba.com/v1'
+        ? 'https://api.nomba.com/v1'
         : 'https://sandbox.nomba.com/v1',
     sandboxDefaults: {
       checkoutSessionId: 'cs_sandbox_' + Date.now(),
