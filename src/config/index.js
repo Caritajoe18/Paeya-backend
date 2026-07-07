@@ -22,6 +22,8 @@ const config = {
       transferReference: 'trf_sandbox_' + Date.now(),
       transactionReference: 'txn_sandbox_' + Date.now(),
     },
+    mainAccountId: process.env.MAIN_ACCOUNT_ID || '',
+    subAccountId: process.env.SUB_ACCOUNT_ID || '',
   },
 
   // ── Auth (Payer admin) ──────────────────────────────

@@ -1,9 +1,14 @@
 import NombaPaymentService from '../services/NombaPaymentService.js';
 import Transaction from '../models/Transaction.js';
+import config from '../config/index.js';
 
 export async function createCheckoutOrder(req, res, next) {
   try {
-    const result = await NombaPaymentService.createCheckoutOrder(req.body);
+    const body = {
+      ...req.body,
+      accountId: req.body.accountId || config.nomba.subAccountId || config.nomba.mainAccountId || undefined,
+    };
+    const result = await NombaPaymentService.createCheckoutOrder(body);
 
     const orderRef = result.data?.orderReference || req.body.orderReference || `ord_${Date.now()}`;
 

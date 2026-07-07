@@ -44,3 +44,16 @@ export async function requeryByTransactionRef(req, res, next) {
     next(err);
   }
 }
+
+export async function requeryBySubAccount(req, res, next) {
+  try {
+    const { subAccountId, transactionRef } = req.params;
+    if (!subAccountId) throw new ValidationError('subAccountId is required');
+    if (!transactionRef) throw new ValidationError('transactionRef is required');
+
+    const result = await NombaRequeryService.getTransactionBySubAccountRef(subAccountId, transactionRef);
+    res.json({ success: true, data: result.data || result });
+  } catch (err) {
+    next(err);
+  }
+}
