@@ -16,7 +16,7 @@ export function authenticateToken(req, _res, next) {
     const decoded = jwt.verify(token, config.jwt.secret);
     req.user = decoded;
     next();
-  } catch (err) {
+  } catch (_err) {
     const error = new Error('Invalid or expired token');
     error.statusCode = 401;
     error.code = 'AUTHENTICATION_ERROR';

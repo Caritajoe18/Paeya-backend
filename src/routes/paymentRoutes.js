@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import { createCheckoutSession, getCheckoutStatus } from '../controllers/paymentController.js';
+import { createCheckoutOrder, getCheckoutStatus } from '../controllers/paymentController.js';
 import { authenticateToken } from '../middleware/auth.js';
 
 const router = Router();
 
-router.post('/checkout', authenticateToken, createCheckoutSession);
-router.get('/checkout/:reference', authenticateToken, getCheckoutStatus);
+router.post('/checkout-order', authenticateToken, createCheckoutOrder);
+router.get('/checkout-order/:reference', authenticateToken, getCheckoutStatus);
 
 export default router;

@@ -3,25 +3,36 @@ import { ValidationError } from '../utils/errors.js';
 
 class NombaPaymentService extends NombaBaseService {
 
-  async createCheckoutSession({ amount, currency = 'NGN', customerEmail, customerName, reference, callbackUrl, metadata = {} }) {
+  async createCheckoutOrder({
+    amount, currency = 'NGN', customerEmail, customerId,
+    orderReference, callbackUrl, accountId, allowedPaymentMethods,
+    orderMetaData = {}, meta = {}, tokenizeCard = false, splitRequest,
+  }) {
     if (!amount || amount <= 0) throw new ValidationError('amount must be a positive number');
     if (!customerEmail) throw new ValidationError('customerEmail is required');
 
-    const payload = {
-      amount,
+    const order = {
+      orderReference: orderReference || `ord_${Date.now()}`,
+      customerId,
+      callbackUrl,
+      customerEmail,
+      amount: String(amount),
       currency,
-      customer: { email: customerEmail, name: customerName },
-      reference: reference || `chk_${Date.now()}`,
-      callback_url: callbackUrl,
-      metadata,
+      ...(accountId && { accountId }),
+      ...(allowedPaymentMethods?.length && { allowedPaymentMethods }),
+      ...(Object.keys(orderMetaData).length && { orderMetaData }),
+      ...(splitRequest && { splitRequest }),
     };
 
-    return this._request('POST', '/checkout/session', payload);
+    const payload = { order, tokenizeCard, meta };
+    if (Object.keys(meta).length === 0) delete payload.meta;
+
+    return this._request('POST', '/checkout/order', payload);
   }
 
   async getCheckoutStatus(reference) {
     if (!reference) throw new ValidationError('reference is required');
-    return this._request('GET', `/checkout/session/${reference}`);
+    return this._request('GET', `/checkout/order/${reference}`);
   }
 }
 

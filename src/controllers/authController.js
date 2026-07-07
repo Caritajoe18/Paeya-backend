@@ -52,3 +52,31 @@ export async function getProfile(req, res, next) {
     next(err);
   }
 }
+
+export async function createUser(req, res, next) {
+  try {
+    const { email, password, name, role } = req.body;
+    if (!email || !password || !name) throw new ValidationError('email, password, and name are required');
+    if (!['admin', 'viewer'].includes(role)) throw new ValidationError('role must be admin or viewer');
+
+    const existing = await User.findOne({ where: { email } });
+    if (existing) throw new ValidationError('Email already registered');
+
+    const user = await User.create({ email, password, name, role });
+    res.status(201).json({ success: true, data: user.toSafeJSON() });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function listUsers(req, res, next) {
+  try {
+    const users = await User.findAll({
+      attributes: { exclude: ['password'] },
+      order: [['createdAt', 'DESC']],
+    });
+    res.json({ success: true, data: users });
+  } catch (err) {
+    next(err);
+  }
+}

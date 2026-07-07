@@ -3,7 +3,7 @@ import { ValidationError } from '../utils/errors.js';
 
 class NombaUtilityService extends NombaBaseService {
 
-  async payBill({ biller, amount, customerId, reference, metadata = {} }) {
+  async payBill({ biller, amount, customerId, merchantTxRef, metadata = {} }) {
     if (!biller) throw new ValidationError('biller is required');
     if (!amount || amount <= 0) throw new ValidationError('amount must be a positive number');
 
@@ -11,8 +11,8 @@ class NombaUtilityService extends NombaBaseService {
       biller,
       amount,
       customer_id: customerId,
-      reference: reference || `bil_${Date.now()}`,
-      metadata,
+      merchantTxRef: merchantTxRef || `bil_${Date.now()}`,
+      ...(Object.keys(metadata).length && { metadata }),
     };
 
     return this._request('POST', '/bill-payments', payload);
@@ -22,32 +22,29 @@ class NombaUtilityService extends NombaBaseService {
     return this._request('GET', '/billers');
   }
 
-  async purchaseAirtime({ phone, amount, provider, reference }) {
-    if (!phone) throw new ValidationError('phone is required');
+  async purchaseAirtime({ phoneNumber, amount, network, merchantTxRef, senderName }) {
+    if (!phoneNumber) throw new ValidationError('phoneNumber is required');
     if (!amount || amount <= 0) throw new ValidationError('amount must be a positive number');
+    if (!network) throw new ValidationError('network is required');
 
     const payload = {
-      phone,
       amount,
-      provider: provider || 'mtn',
-      reference: reference || `air_${Date.now()}`,
+      phoneNumber,
+      network: network.toUpperCase(),
+      merchantTxRef: merchantTxRef || `air_${Date.now()}`,
+      ...(senderName && { senderName }),
     };
 
-    return this._request('POST', '/airtime', payload);
+    return this._request('POST', '/bill/topup', payload);
   }
 
-  async purchaseDataBundle({ phone, plan, provider, reference }) {
-    if (!phone) throw new ValidationError('phone is required');
-    if (!plan) throw new ValidationError('plan is required');
+  async fetchDataPlans(telco) {
+    if (!telco) throw new ValidationError('telco is required');
+    const validTelcos = ['mtn', 'airtel', 'glo', '9mobile'];
+    const normalized = telco.toLowerCase();
+    if (!validTelcos.includes(normalized)) throw new ValidationError(`telco must be one of: ${validTelcos.join(', ')}`);
 
-    const payload = {
-      phone,
-      plan,
-      provider: provider || 'mtn',
-      reference: reference || `dat_${Date.now()}`,
-    };
-
-    return this._request('POST', '/data', payload);
+    return this._request('GET', `/bill/data-plan/${normalized}`);
   }
 }
 
