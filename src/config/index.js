@@ -15,7 +15,7 @@ const config = {
     sandboxMode: process.env.NOMBA_SANDBOX_MODE !== 'false',
     baseUrl:
       process.env.NOMBA_ENVIRONMENT === 'production'
-        ? 'https://api.nomba.com/v1'
+        ? 'https://sandbox.nomba.com/v1'
         : 'https://sandbox.nomba.com/v1',
     sandboxDefaults: {
       checkoutSessionId: 'cs_sandbox_' + Date.now(),

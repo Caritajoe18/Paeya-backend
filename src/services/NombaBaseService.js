@@ -39,7 +39,7 @@ class NombaBaseService {
   _mockPayload(method, path, data) {
     if (path.includes('/checkout/order')) {
       return {
-        checkoutLink: `https://checkout.sandbox.nomba.com/${data?.order?.orderReference || 'cs_test'}`,
+        checkoutLink: `https://checkout.nomba.com/sandbox/${data?.order?.orderReference || 'cs_test'}`,
         orderReference: data?.order?.orderReference || `ord_${Date.now()}`,
       };
     }
