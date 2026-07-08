@@ -1,6 +1,9 @@
 # Payer — Unified SME Financial Platform
 
-**Demo:** https://payer-paywell.vercel.app/login — login with `admin@example.com` / `payer`
+**Demo:** https://payer-paywell.vercel.app/login — login with `admin@example.com` / `payer` Registration also logs you in.
+
+**Video:** https://www.loom.com/share/886d5d4a941d4b71890532c988dd68ec
+**Post:** https://www.linkedin.com/posts/caritandibe_nombahack-build-sme-share-7480600377181102080-FS2w
 
 Node.js backend that integrates Nomba APIs (Checkout, Transfers, Bill Payments, Airtime/Data) into a single platform with admin auth, webhook handling, and a local PostgreSQL ledger.
 
