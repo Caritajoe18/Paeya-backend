@@ -6,7 +6,8 @@ export async function createCheckoutOrder(req, res, next) {
   try {
     const body = {
       ...req.body,
-      accountId: req.body.accountId || config.nomba.subAccountId || config.nomba.mainAccountId || undefined,
+      amount: String(Math.round(Number(req.body.amount))),
+      accountId: config.nomba.subAccountId || config.nomba.mainAccountId || undefined,
     };
     const result = await NombaPaymentService.createCheckoutOrder(body);
 
@@ -30,7 +31,6 @@ export async function createCheckoutOrder(req, res, next) {
     next(err);
   }
 }
-
 export async function getCheckoutStatus(req, res, next) {
   try {
     const result = await NombaPaymentService.getCheckoutStatus(req.params.reference);

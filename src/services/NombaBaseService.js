@@ -8,15 +8,37 @@ class NombaBaseService {
     this.client = nombaClient;
   }
 
+  _buildPath(path) {
+    const isSandbox = config.nomba.environment !== 'production';
+    if (isSandbox && path.startsWith('/checkout/')) {
+      const sandboxPath = '/sandbox/checkout' + path.slice('/checkout'.length);
+      console.log(`[NombaService] Sandbox checkout path: ${path} → ${sandboxPath}`);
+      return sandboxPath;
+    }
+    return '/v1' + path;
+  }
+
   async _request(method, path, data = null, options = {}) {
+    const fullPath = this._buildPath(path);
+    console.log(`[NombaService] _request called: ${method} ${path} → ${fullPath}`);
+    console.log('[NombaService] useMock:', this.useMock);
+    console.log('[NombaService] sandboxMode:', config.nomba.sandboxMode, '| clientId:', config.nomba.clientId ? 'set' : 'not set');
+    console.log('[NombaService] options:', JSON.stringify({ ...options, idempotentKey: options.idempotentKey ? '***' : undefined }));
+
     if (this.useMock) {
+      console.log('[NombaService] Returning mock response');
       return this._mockResponse(method, path, data);
     }
+
     const headers = {};
     if (options.idempotentKey) {
       headers['X-Idempotent-key'] = options.idempotentKey;
+      console.log('[NombaService] Added idempotent key header');
     }
-    const response = await this.client.request({ method, url: path, data, headers });
+
+    console.log('[NombaService] Making real API call to', `${config.nomba.baseUrl}${fullPath}`);
+    const response = await this.client.request({ method, url: fullPath, data, headers });
+    console.log('[NombaService] API call succeeded, status:', response.status);
     return response.data;
   }
 
@@ -41,6 +63,17 @@ class NombaBaseService {
       return {
         checkoutLink: `https://checkout.nomba.com/sandbox/${data?.order?.orderReference || 'cs_test'}`,
         orderReference: data?.order?.orderReference || `ord_${Date.now()}`,
+      };
+    }
+    if (path.includes('/sandbox/checkout/order')) {
+      const ref = data?.order?.orderReference || `ord_${Date.now()}`;
+      return {
+        code: '00',
+        description: 'Success',
+        data: {
+          checkoutLink: `https://checkout.nomba.com/sandbox/${ref}`,
+          orderReference: ref,
+        },
       };
     }
     if (path.includes('/transfers/bank')) {

@@ -16,10 +16,11 @@ const config = {
     accountId: process.env.NOMBA_ACCOUNT_ID || '',
     environment: process.env.NOMBA_ENVIRONMENT || 'sandbox',
     sandboxMode: process.env.NOMBA_SANDBOX_MODE !== 'false',
-    baseUrl:
+    baseUrl: process.env.NOMBA_BASE_URL || (
       process.env.NOMBA_ENVIRONMENT === 'production'
-        ? 'https://api.nomba.com/v1'
-        : 'https://sandbox.nomba.com/v1',
+        ? 'https://api.nomba.com'
+        : 'https://sandbox.nomba.com'
+    ),
     sandboxDefaults: {
       checkoutSessionId: 'cs_sandbox_' + Date.now(),
       transferReference: 'trf_sandbox_' + Date.now(),

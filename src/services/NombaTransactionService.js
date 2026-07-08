@@ -10,7 +10,7 @@ class NombaTransactionService extends NombaBaseService {
     if (type) params.append('type', type);
     if (status) params.append('status', status);
 
-    return this._request('GET', `/transactions?${params.toString()}`);
+    return this._request('GET', `/transactions/fetch-transactions-on-the-parent-account?${params.toString()}`);
   }
 
   async getTransactionByReference(reference) {
