@@ -9,6 +9,10 @@ class NombaBaseService {
   }
 
   _buildPath(path) {
+    if (path.startsWith('/sandbox/')) {
+      console.log(`[NombaService] Sandbox path (passthrough): ${path}`);
+      return path;
+    }
     const isSandbox = config.nomba.environment !== 'production';
     if (isSandbox && path.startsWith('/checkout/')) {
       const sandboxPath = '/sandbox/checkout' + path.slice('/checkout'.length);
@@ -34,6 +38,10 @@ class NombaBaseService {
     if (options.idempotentKey) {
       headers['X-Idempotent-key'] = options.idempotentKey;
       console.log('[NombaService] Added idempotent key header');
+    }
+    if (options.accountId) {
+      headers['accountId'] = options.accountId;
+      console.log('[NombaService] Added accountId override:', options.accountId);
     }
 
     console.log('[NombaService] Making real API call to', `${config.nomba.baseUrl}${fullPath}`);

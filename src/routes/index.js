@@ -10,6 +10,7 @@ import productRoutes from './productRoutes.js';
 import requeryRoutes from './requeryRoutes.js';
 import virtualAccountRoutes from './virtualAccountRoutes.js';
 import staffRoutes from './staffRoutes.js';
+import accountRoutes from './accountRoutes.js';
 
 const router = Router();
 
@@ -24,6 +25,7 @@ router.use('/products', productRoutes);
 router.use('/requery', requeryRoutes);
 router.use('/virtual-accounts', virtualAccountRoutes);
 router.use('/staff', staffRoutes);
+router.use('/accounts', accountRoutes);
 
 router.get('/health', (_req, res) => {
   res.json({

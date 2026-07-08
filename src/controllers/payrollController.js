@@ -74,9 +74,13 @@ export async function fetchBanks(req, res, next) {
 
 export async function runPayroll(req, res, next) {
   try {
-    const staff = await Staff.findAll({ where: { isActive: true } });
+    const where = { isActive: true };
+    if (req.body.staffIds && Array.isArray(req.body.staffIds) && req.body.staffIds.length > 0) {
+      where.id = req.body.staffIds;
+    }
+    const staff = await Staff.findAll({ where });
     if (!staff.length) {
-      return res.status(400).json({ success: false, error: { code: 'NO_STAFF', message: 'No active staff found' } });
+      return res.status(400).json({ success: false, error: { code: 'NO_STAFF', message: 'No staff found' } });
     }
 
     const idempotentKey = req.headers['x-idempotent-key'] || NombaPayrollService._generateIdempotentKey();
@@ -84,8 +88,8 @@ export async function runPayroll(req, res, next) {
 
     const transfers = staff.map((s) => ({
       amount: Number(s.salary),
-      accountNumber: s.accountNumber,
-      bankCode: s.bankCode,
+      recipientAccount: s.accountNumber,
+      recipientBank: s.bankCode,
       recipientName: s.name,
       senderName: req.body.senderName,
       narration: 'Monthly payroll',

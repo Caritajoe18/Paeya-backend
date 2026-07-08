@@ -13,6 +13,9 @@ const Staff = sequelize.define('Staff', {
   currency: { type: DataTypes.STRING(3), defaultValue: 'NGN' },
   isActive: { type: DataTypes.BOOLEAN, defaultValue: true },
   metadata: { type: DataTypes.JSONB, defaultValue: {} },
+}, {
+  tableName: 'Staff',
+  timestamps: true,
 });
 
 export default Staff;

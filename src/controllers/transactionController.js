@@ -40,7 +40,18 @@ export async function getTransaction(req, res, next) {
 
 export async function syncFromNomba(req, res, next) {
   try {
-    const result = await NombaTransactionService.listTransactions(req.query);
+    const { scope, ...query } = req.query;
+    const result = await NombaTransactionService.listTransactions({ ...query, scope: scope || 'parent' });
+    res.json({ success: true, data: result.data || result });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function filterNombaTransactions(req, res, next) {
+  try {
+    const scope = req.query.scope || 'parent';
+    const result = await NombaTransactionService.filterTransactions(req.body, scope);
     res.json({ success: true, data: result.data || result });
   } catch (err) {
     next(err);

@@ -93,15 +93,19 @@ nombaClient.interceptors.request.use(async (req) => {
   if (!isSandboxNoAuth()) {
     const token = await getAccessToken();
     req.headers.Authorization = `Bearer ${token.replace(/^Bearer\s+/i, '')}`;
-    console.log('[Nomba] Set Authorization header (token:', token.slice(0, 20) + '...)');
-    if (config.nomba.accountId) {
-      req.headers.accountId = config.nomba.accountId;
-      console.log('[Nomba] Set accountId header:', config.nomba.accountId);
-    } else if (config.nomba.mainAccountId) {
-      req.headers.accountId = config.nomba.mainAccountId;
-      console.log('[Nomba] Set accountId header from MAIN_ACCOUNT_ID:', config.nomba.mainAccountId);
+    console.log('[Nomba] Set Authorization header (token:', token.slice(0, 8) + '...' + token.slice(-4) + ')');
+    if (!req.headers.accountId) {
+      if (config.nomba.accountId) {
+        req.headers.accountId = config.nomba.accountId;
+        console.log('[Nomba] Set accountId header:', config.nomba.accountId);
+      } else if (config.nomba.mainAccountId) {
+        req.headers.accountId = config.nomba.mainAccountId;
+        console.log('[Nomba] Set accountId header from MAIN_ACCOUNT_ID:', config.nomba.mainAccountId);
+      } else {
+        console.warn('[Nomba] WARNING: no accountId set — Nomba API may reject the request');
+      }
     } else {
-      console.warn('[Nomba] WARNING: no accountId set — Nomba API may reject the request');
+      console.log('[Nomba] Using request-level accountId override:', req.headers.accountId);
     }
   } else {
     console.log('[Nomba] Sandbox no-auth mode — no token/accountId headers sent');
